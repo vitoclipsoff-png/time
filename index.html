@@ -4,7 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vitan.ai - منظم الجداول الذكي</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #111;
+            padding: 20px;
+            border-bottom: 1px solid #0f0;
+        }
+
+        .logo h1 {
+            color: #0f0;
+            margin: 0;
+        }
+
+        main {
+            padding: 20px 0;
+        }
+
+        h2 {
+            color: #0f0;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #0f0;
+            background-color: #111;
+            color: #fff;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #0f0;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0c0;
+        }
+
+        #table-container {
+            margin-top: 20px;
+            border: 1px solid #0f0;
+            padding: 20px;
+            border-radius: 5px;
+            min-height: 200px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #111;
+            border-top: 1px solid #0f0;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -29,5 +104,79 @@
     <footer>
         <p>&copy; 2025 Vitan.ai</p>
     </footer>
+    <script>
+        // JavaScript for Vitan.ai
+        document.addEventListener('DOMContentLoaded', () => {
+            const generateBtn = document.getElementById('generate-table-btn');
+            const tableDescription = document.getElementById('table-description');
+            const tableContainer = document.getElementById('table-container');
+
+            generateBtn.addEventListener('click', () => {
+                const description = tableDescription.value;
+                if (description.trim() === '') {
+                    alert('يرجى إدخال وصف للجدول.');
+                    return;
+                }
+
+                // AI parsing logic will be added later.
+                const columns = parseDescription(description);
+                if (columns.length === 0) {
+                    tableContainer.innerHTML = `<p>لم أتمكن من تحديد الأعمدة من الوصف. يرجى محاولة مرة أخرى.</p>`;
+                } else {
+                    const table = createTable(columns);
+                    tableContainer.innerHTML = '';
+                    tableContainer.appendChild(table);
+                }
+            });
+
+            function createTable(columns) {
+                const table = document.createElement('table');
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
+                const tr = document.createElement('tr');
+
+                columns.forEach(column => {
+                    const th = document.createElement('th');
+                    th.textContent = column;
+                    tr.appendChild(th);
+                });
+
+                thead.appendChild(tr);
+                table.appendChild(thead);
+                table.appendChild(tbody);
+
+                // Add a few empty rows as a placeholder
+                for (let i = 0; i < 3; i++) {
+                    const row = document.createElement('tr');
+                    for (let j = 0; j < columns.length; j++) {
+                        const td = document.createElement('td');
+                        td.textContent = '...';
+                        row.appendChild(td);
+                    }
+                    tbody.appendChild(row);
+                }
+
+                return table;
+            }
+
+            function parseDescription(description) {
+                const keywords = ['أعمدة', 'بأعمدة', 'اعمدة', 'باعمدة'];
+                const lowercasedDescription = description.toLowerCase();
+                let columns = [];
+
+                for (const keyword of keywords) {
+                    if (lowercasedDescription.includes(keyword)) {
+                        const parts = description.split(new RegExp(keyword + '\\s*:?', 'i'));
+                        if (parts.length > 1) {
+                            const columnString = parts[1].trim();
+                            columns = columnString.split(/،|,|\\s+و\\s+|\\s+/).map(col => col.trim()).filter(col => col.length > 0);
+                            return columns;
+                        }
+                    }
+                }
+                return columns;
+            }
+        });
+    </script>
 </body>
 </html>
